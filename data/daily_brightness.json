@@ -1,0 +1,12 @@
+{
+  "metadata": {
+    "target": "alpha Ori",
+    "source": "AAVSO",
+    "band": "V",
+    "calculation": "Daily median V-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
+    "generated_at_utc": null,
+    "day_count": 0,
+    "observation_count": 0
+  },
+  "days": []
+}

@@ -18,7 +18,7 @@
       background: radial-gradient(circle at top, rgba(255, 136, 0, 0.22), transparent 34rem);
     }
     main {
-      width: min(44rem, calc(100% - 2rem));
+      width: min(64rem, calc(100% - 2rem));
       padding: 2rem;
       border: 1px solid color-mix(in srgb, CanvasText 14%, transparent);
       border-radius: 1.5rem;
@@ -41,11 +41,26 @@
       gap: 1rem;
       margin-bottom: 1.5rem;
     }
-    .card {
+    .card, .chart-card {
       padding: 1rem;
       border: 1px solid color-mix(in srgb, CanvasText 12%, transparent);
       border-radius: 1rem;
       background: color-mix(in srgb, CanvasText 4%, Canvas);
+    }
+    .chart-card {
+      margin: 1.5rem 0;
+      overflow: hidden;
+    }
+    .chart-card h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.2rem;
+    }
+    .chart-card img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 0.75rem;
+      background: white;
     }
     .label {
       display: block;
@@ -76,7 +91,7 @@
 <body>
   <main>
     <h1>Beetlejuice Brightness</h1>
-    <p class="subtitle">Daily V-band magnitude summary for Betelgeuse / Alpha Orionis.</p>
+    <p class="subtitle">Daily visual magnitude summary for Betelgeuse / Alpha Orionis.</p>
 
     <section class="grid" aria-live="polite">
       <div class="card">
@@ -97,8 +112,13 @@
       </div>
     </section>
 
+    <section class="chart-card" aria-labelledby="chart-title">
+      <h2 id="chart-title">Brightness over time</h2>
+      <img src="data/brightness_plot.svg" alt="Line chart of Betelgeuse daily median visual magnitude from AAVSO observations. Lower magnitude values are brighter.">
+    </section>
+
     <p class="note" id="metadata">Reading <code>data/daily_brightness.json</code>...</p>
-    <p class="note">Magnitude is inverted: lower numbers mean brighter. A graph will come next.</p>
+    <p class="note">Magnitude is inverted: lower numbers mean brighter. The graph is generated with R and ggplot2.</p>
   </main>
 
   <script>

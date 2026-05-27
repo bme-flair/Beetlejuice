@@ -4,12 +4,12 @@ A small web app that collects daily brightness data for Betelgeuse, also known a
 
 ## Data source
 
-The first version uses the AAVSO Light Curve Generator static API-style URL. The fetcher requests V-band observations for `alpha Ori`, stores the raw parsed observations, and builds a daily summary.
+The first version uses the AAVSO Light Curve Generator static API-style URL. The fetcher requests visual and V-band observations for `alpha Ori`, stores the raw parsed observations, and builds a daily summary from the selected summary band.
 
 AAVSO URL pattern used by the script:
 
 ```text
-https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=V&Grid=true&view=api.delim&ident=alpha+Ori&fromjd=...&tojd=...&delimiter=%40%40%40
+https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alpha+Ori&fromjd=...&tojd=...&delimiter=%40%40%40
 ```
 
 ## Data files
@@ -18,7 +18,7 @@ https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=V&Grid=t
 - `data/observations.csv` - spreadsheet-friendly copy of the raw parsed observations.
 - `data/daily_brightness.json` - one daily summary row per UTC date.
 
-The daily summary uses median V-band magnitude for each date. In astronomy, lower magnitude values mean the star is brighter.
+The daily summary currently uses median `Vis` magnitude for each date, because Betelgeuse has many more visual observations than recent instrument V-band measurements. In astronomy, lower magnitude values mean the star is brighter.
 
 ## Updating the data
 
@@ -27,7 +27,7 @@ The GitHub Action in `.github/workflows/update-data.yml` runs once per day and c
 To run it locally:
 
 ```bash
-python scripts/fetch_aavso.py --lookback-days 365
+python scripts/fetch_aavso.py --lookback-days 365 --requested-bands Vis,V --summary-band Vis
 ```
 
 The script uses only the Python standard library.

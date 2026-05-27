@@ -2,9 +2,10 @@
   "metadata": {
     "target": "alpha Ori",
     "source": "AAVSO",
-    "band": "V",
-    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=V&Grid=true&view=api.delim&ident=alpha+Ori&fromjd=2460822.79406&tojd=2461188.79406&delimiter=%40%40%40",
-    "last_checked_at_utc": "2026-05-27T07:03:27Z",
+    "requested_bands": "Vis,V",
+    "summary_band": "Vis",
+    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alpha+Ori&fromjd=2460822.80120&tojd=2461188.80120&delimiter=%40%40%40",
+    "last_checked_at_utc": "2026-05-27T07:13:44Z",
     "new_observations_seen": 0,
     "observation_count": 0
   },

@@ -19,7 +19,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-AAVSO_URL = "https://www.aavso.org/LCGv2/static.htm"
+AAVSO_DATA_URL = "https://vsx.aavso.org/index.php"
 DEFAULT_TARGET = "alf Ori"
 DEFAULT_REQUESTED_BANDS = "Vis,V"
 DEFAULT_SUMMARY_BAND = "Vis"
@@ -111,6 +111,14 @@ def normalize_header(value: str) -> str:
     return text.strip("_")
 
 
+def normalize_band(value: Any) -> str:
+    return str(value or "").strip().rstrip(".").upper()
+
+
+def parse_band_list(value: str) -> set[str]:
+    return {normalize_band(part) for part in value.split(",") if part.strip()}
+
+
 def parse_float(value: Any) -> float | None:
     if value is None:
         return None
@@ -157,18 +165,18 @@ def load_existing_observations() -> list[dict[str, Any]]:
     return list(payload.get("observations", []))
 
 
-def build_aavso_url(target: str, requested_bands: str, from_jd: float, to_jd: float, delimiter: str) -> str:
+def build_aavso_url(target: str, from_jd: float, to_jd: float, delimiter: str) -> str:
+    # The public static light-curve page delegates its data loading to this VSX endpoint.
+    # The static wrapper accepts display parameters such as RequestedBands, but the raw
+    # data URL built by the page only carries view, ident, date range, and delimiter.
     params = {
-        "DateFormat": "Julian",
-        "RequestedBands": requested_bands,
-        "Grid": "true",
         "view": "api.delim",
         "ident": target,
         "fromjd": f"{from_jd:.5f}",
         "tojd": f"{to_jd:.5f}",
         "delimiter": delimiter,
     }
-    return f"{AAVSO_URL}?{urllib.parse.urlencode(params)}"
+    return f"{AAVSO_DATA_URL}?{urllib.parse.urlencode(params)}"
 
 
 def fetch_text(url: str) -> str:
@@ -201,11 +209,12 @@ def split_candidate_line(line: str, delimiter: str) -> list[str] | None:
     return None
 
 
-def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at: str, requested_bands: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows: list[dict[str, str]] = []
     headers: list[str] | None = None
     candidate_lines = 0
     skipped_malformed = 0
+    allowed_bands = parse_band_list(requested_bands)
 
     for line in text.splitlines():
         line = line.strip()
@@ -235,11 +244,16 @@ def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at:
 
     observations: list[dict[str, Any]] = []
     skipped_unparsed = 0
+    skipped_band = 0
     for row in rows:
         jd = parse_float(row.get("jd") or row.get("julian_date"))
         magnitude = parse_float(row.get("magnitude") or row.get("mag"))
         observed_at = parse_observed_at(row.get("utc") or row.get("date"), jd)
         band = row.get("band") or row.get("filter") or ""
+
+        if allowed_bands and normalize_band(band) not in allowed_bands:
+            skipped_band += 1
+            continue
 
         if jd is None or magnitude is None or observed_at is None or not band:
             skipped_unparsed += 1
@@ -272,8 +286,10 @@ def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at:
         "parsed_observations": len(observations),
         "skipped_malformed_lines": skipped_malformed,
         "skipped_unparsed_rows": skipped_unparsed,
+        "skipped_wrong_band_rows": skipped_band,
         "header_detected": headers is not None,
         "detected_headers": headers or [],
+        "looks_like_html": "<html" in text[:1000].lower(),
     }
     return observations, diagnostics
 
@@ -295,8 +311,9 @@ def mean(values: list[float]) -> float:
 
 def build_daily_summary(observations: list[dict[str, Any]], *, target: str, summary_band: str, generated_at: str) -> dict[str, Any]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    wanted = normalize_band(summary_band)
     for obs in observations:
-        if str(obs.get("band", "")).upper() != summary_band.upper():
+        if normalize_band(obs.get("band", "")) != wanted:
             continue
         if obs.get("magnitude") is None or not obs.get("date_utc"):
             continue
@@ -357,14 +374,17 @@ def write_debug(path: Path, *, url: str, diagnostics: dict[str, Any], text: str)
         handle.write(f"URL: {url}\n\n")
         handle.write("Diagnostics:\n")
         handle.write(json.dumps(diagnostics, indent=2, ensure_ascii=False))
-        handle.write("\n\nFull response body follows:\n")
-        handle.write(text)
+        handle.write("\n\nFirst 5000 response characters:\n")
+        sample = text[:5000]
+        handle.write(sample)
+        if len(text) > len(sample):
+            handle.write("\n...[truncated]...\n")
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Fetch Betelgeuse brightness observations from AAVSO.")
     parser.add_argument("--target", default=DEFAULT_TARGET, help="AAVSO target identifier, default: alf Ori")
-    parser.add_argument("--requested-bands", default=DEFAULT_REQUESTED_BANDS, help="Comma-separated AAVSO bands to request, default: Vis,V")
+    parser.add_argument("--requested-bands", default=DEFAULT_REQUESTED_BANDS, help="Comma-separated AAVSO bands to keep, default: Vis,V")
     parser.add_argument("--summary-band", default=DEFAULT_SUMMARY_BAND, help="Band to use in daily_brightness.json, default: Vis")
     parser.add_argument("--band", dest="legacy_band", default=None, help="Deprecated alias for --requested-bands and --summary-band")
     parser.add_argument("--lookback-days", type=int, default=365, help="Number of days to fetch, default: 365")
@@ -384,14 +404,14 @@ def main(argv: list[str] | None = None) -> int:
     to_jd = args.to_jd if args.to_jd is not None else datetime_to_julian_date(run_at + timedelta(days=1))
     from_jd = args.from_jd if args.from_jd is not None else datetime_to_julian_date(run_at - timedelta(days=args.lookback_days))
 
-    url = build_aavso_url(args.target, requested_bands, from_jd, to_jd, DEFAULT_DELIMITER)
-    print(f"Fetching {args.target} observations from AAVSO")
-    print(f"Requested bands: {requested_bands}; summary band: {summary_band}")
+    url = build_aavso_url(args.target, from_jd, to_jd, DEFAULT_DELIMITER)
+    print(f"Fetching {args.target} observations from AAVSO data endpoint")
+    print(f"Keeping bands: {requested_bands}; summary band: {summary_band}")
     print(f"Range: JD {from_jd:.5f} to {to_jd:.5f}")
 
     existing = load_existing_observations()
     text = fetch_text(url)
-    new, diagnostics = parse_aavso_delimited(text, delimiter=DEFAULT_DELIMITER, target=args.target, fetched_at=fetched_at)
+    new, diagnostics = parse_aavso_delimited(text, delimiter=DEFAULT_DELIMITER, target=args.target, fetched_at=fetched_at, requested_bands=requested_bands)
     observations = merge_observations(existing, new)
 
     observations_payload = {

@@ -4,10 +4,22 @@
     "source": "AAVSO",
     "requested_bands": "Vis,V",
     "summary_band": "Vis",
-    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alf+Ori&fromjd=2460822.81116&tojd=2461188.81116&delimiter=%40%40%40",
-    "last_checked_at_utc": "2026-05-27T07:28:04Z",
+    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alf+Ori&fromjd=2460822.81884&tojd=2461188.81884&delimiter=%40%40%40",
+    "last_checked_at_utc": "2026-05-27T07:39:08Z",
     "new_observations_seen": 0,
-    "observation_count": 0
+    "observation_count": 0,
+    "diagnostics": {
+      "response_characters": 52068,
+      "response_lines": 464,
+      "delimiter_count": 1,
+      "candidate_lines": 101,
+      "parsed_rows_before_validation": 52,
+      "parsed_observations": 0,
+      "skipped_malformed_lines": 49,
+      "skipped_unparsed_rows": 52,
+      "header_detected": false,
+      "detected_headers": []
+    }
   },
   "observations": []
 }

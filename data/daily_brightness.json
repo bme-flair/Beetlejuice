@@ -1,10 +1,10 @@
 {
   "metadata": {
-    "target": "alpha Ori",
+    "target": "alf Ori",
     "source": "AAVSO",
     "band": "Vis",
     "calculation": "Daily median Vis-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
-    "generated_at_utc": "2026-05-27T07:28:04Z",
+    "generated_at_utc": "2026-05-27T07:39:08Z",
     "day_count": 0,
     "observation_count": 0
   },

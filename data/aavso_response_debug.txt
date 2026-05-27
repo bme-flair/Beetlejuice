@@ -1,0 +1,99 @@
+AAVSO response debug
+====================
+
+URL: https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alf+Ori&fromjd=2460822.81884&tojd=2461188.81884&delimiter=%40%40%40
+
+Diagnostics:
+{
+  "response_characters": 52068,
+  "response_lines": 464,
+  "delimiter_count": 1,
+  "candidate_lines": 101,
+  "parsed_rows_before_validation": 52,
+  "parsed_observations": 0,
+  "skipped_malformed_lines": 49,
+  "skipped_unparsed_rows": 52,
+  "header_detected": false,
+  "detected_headers": []
+}
+
+First 5000 response characters:
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+  <meta charset="UTF-8">
+
+  <title>Static Light Curve</title>
+      <script charset="UTF-8" type="text/javascript" src="d3.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="99_static_buildData.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="100_static_initPlot.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="101_static_buildPlot.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="102_static_grid.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="103_static_symbols.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="104_static_legend.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="105_static_bowser.js"></script>
+      <script charset="UTF-8" type="text/javascript" src="09_rememberStar.js"></script>
+
+   <link href='lcg.css' rel='stylesheet' />
+
+</head>
+
+<body onLoad=testBrowserVersion();getData() style='font-family:arial'>
+<table id=topTable style=width:100% ><tr><td style=width:50% align=right>
+<div id=plotTitleDiv ></div>
+</td>
+<td style='width:50%;'>
+<DIV id=printLegendDiv style='display:none;font-size:80%;left:0px;width:70%;padding:0px;background-color:white;text-align:justify'>
+    <center>
+    <div id=legendHolderDiv>
+    <table style=font-family:arial cellspacing=0 cellpadding=5 ><tr>
+    <td id=legendSpectra align=right style='display:none'>Spectra<br>
+        <nobr><svg width="80" height="25" overflow="visible">
+        <defs>
+        <radialGradient id="spectraGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+        <stop offset="0%" style="stop-color:rgb(255,0,0);stop-opacity:1" />
+        <stop offset="50%" style="stop-color:orange;stop-opacity:1" />
+        <stop offset="100%" style="stop-color:blue;stop-opacity:1" />
+        </radialGradient>
+        </defs>
+        <circle r="12" cx=65 cy="10" fill="url(#spectraGradient)"  />
+        </svg>&nbsp;&nbsp;&nbsp;</nobr>
+    </td>
+     <td align=center id=legendVis>Vis
+     <div id=divLegendVis  style="padding:0px;width:15px;height:15px">
+     <svg  overflow="visible" xmlns="http://www.w3.org/2000/svg"    viewBox="-7.5 -7.5 15 15" >
+     <g transform="scale(15)" id="g_Vis"   fill="none"   stroke="black" stroke-width=".1" name="Circle"><polygon points="0.5,5.16573e-008 0.47553,-0.154508 0.40451,-0.293893 0.293893,-0.40451 0.154509,-0.475527 5.16573e-008,-0.5 -0.154508,-0.475527 -0.293893,-0.40451 -0.40451,-0.293893 -0.475527,-0.154508 -0.5,5.16573e-008 -0.475527,0.154509 -0.40451,0.293893 -0.293893,0.40451 -0.154508,0.47553 5.16573e-008,0.5 0.154509,0.47553 0.293893,0.40451 0.40451,0.293893 0.47553,0.154509" /></g></svg></div></td>
+    <td align=center id=legendFaint>Faint
+     <div id=divLegendFaint  title="Fainter-than" style="padding:0px;width:15px;height:15px">
+     <svg  overflow="visible" xmlns="http://www.w3.org/2000/svg"    viewBox="-7.7 -7.5 15 15" >
+        <g id="g_Faint"  transform="scale(15)"  fill="rgb(0,0,0)" stroke="black" stroke-width=".025" name="TriV" ><polygon  points="1.37583e-8 0.298629 0.5 -0.298629 -0.5 -0.298629 " /></g>
+    </svg>
+    </div></td>
+     <td align=center id=legendB>B
+     <div id=divLegendB  title="" style="padding:0px;width:15px;height:15px">
+     <svg  overflow="visible" xmlns="http://www.w3.org/2000/svg"    viewBox="-7.7 -7.5 15 15" >
+        <g transform="scale(15)"  id="g_B" bandNum="3" fill="rgb(0,0,255)" stroke="black" stroke-width=".025" name="Star6">
+        <polygon points="0.216506,0.125 0.5,2.98023e-008 0.216506,-0.125 0.25,-0.433013 2.98023e-008,-0.25 -0.25,-0.433013 -0.216506,-0.125 -0.5,2.98023e-008 -0.216506,0.125 -0.25,0.433013 2.98023e-008,0.25 0.25,0.433013" /></g>
+    </svg>
+    </div></td>
+     <td align=center id=legendV>V
+     <div id=divLegendV  title="" style="padding:0px;width:15px;height:15px">
+     <svg  overflow="visible" xmlns="http://www.w3.org/2000/svg"    viewBox="-7.7 -7.5 15 15" >
+        <g transform="scale(15)"  id="g_V" bandNum="2" fill="rgb(0,255,0)"   stroke="black" stroke-width=".025" name="Pgon4"><polygon points="0.5,0.5 0.5,-0.5 -0.5,-0.5 -0.5,0.5" /></g>
+    </svg>
+    </div></td>
+     <td align=center id=legendR>R
+         <div id=divLegendR  title="" style="padding:0px;width:15px;height:15px">
+             <svg  overflow="visible" xmlns="http://www.w3.org/2000/svg"    viewBox="-7.7 -7.5 15 15" >
+                <g  transform="scale(15)" id="g_R" bandNum="4" fill="rgb(255,0,0)" stroke="black" stroke-width=".025" name="Pgon4d">
+                    <polygon points="0.5,-1.47025e-007 -1.47025e-007,-0.5 -0.5,-1.47025e-007 -1.47025e-007,0.5" />
+                </g>
+            </svg>
+        </div>
+    </td>
+     <td align=center id=legendI>I
+     <div id=divLegendI  title="" style="padding:0px;width:15px;height:15px">
+     <svg  overflow="visible" xmlns="http://www.w3.org/2000/svg"    viewBox="-7.7 -7.5 15 1
+...[truncated]...

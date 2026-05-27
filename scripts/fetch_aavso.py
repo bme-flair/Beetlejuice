@@ -1,0 +1,360 @@
+#!/usr/bin/env python3
+"""Fetch Betelgeuse brightness observations from AAVSO and build daily summaries.
+
+This script intentionally uses only the Python standard library so it can run in a
+plain GitHub Actions environment.
+"""
+
+from __future__ import annotations
+
+import argparse
+import csv
+import json
+import statistics
+import sys
+import urllib.parse
+import urllib.request
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+from typing import Any
+
+AAVSO_URL = "https://www.aavso.org/LCGv2/static.htm"
+DEFAULT_TARGET = "alpha Ori"
+DEFAULT_BAND = "V"
+DEFAULT_DELIMITER = "@@@"
+
+DATA_DIR = Path("data")
+OBS_JSON = DATA_DIR / "observations.json"
+OBS_CSV = DATA_DIR / "observations.csv"
+DAILY_JSON = DATA_DIR / "daily_brightness.json"
+
+CSV_FIELDS = [
+    "source",
+    "target",
+    "source_observation_id",
+    "magnitude_type",
+    "observed_at_utc",
+    "date_utc",
+    "julian_date",
+    "magnitude",
+    "magnitude_error",
+    "band",
+    "observer_code",
+    "fetched_at_utc",
+]
+
+FALLBACK_AAVSO_COLUMNS = [
+    "id",
+    "magnitude_type",
+    "name",
+    "jd",
+    "utc",
+    "magnitude",
+    "uncertainty",
+    "band",
+    "obstype",
+    "comp",
+    "cmag",
+    "comp2_check",
+    "kmag",
+    "airmass",
+    "charts",
+    "comment_code",
+    "software",
+    "transformed",
+    "comments",
+    "digitizer",
+    "ads_reference",
+    "observer_code",
+    "affiliation",
+    "credit",
+]
+
+
+def now_utc() -> datetime:
+    return datetime.now(timezone.utc).replace(microsecond=0)
+
+
+def isoformat_z(value: datetime) -> str:
+    return value.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def datetime_to_julian_date(value: datetime) -> float:
+    value = value.astimezone(timezone.utc)
+    unix_seconds = value.timestamp()
+    return unix_seconds / 86400.0 + 2440587.5
+
+
+def julian_date_to_datetime(jd: float) -> datetime:
+    unix_seconds = (jd - 2440587.5) * 86400.0
+    return datetime.fromtimestamp(unix_seconds, tz=timezone.utc).replace(microsecond=0)
+
+
+def normalize_header(value: str) -> str:
+    text = value.strip().lower()
+    replacements = {
+        "#": "",
+        "/": "_",
+        " ": "_",
+        "-": "_",
+        "(": "",
+        ")": "",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    while "__" in text:
+        text = text.replace("__", "_")
+    return text.strip("_")
+
+
+def parse_float(value: Any) -> float | None:
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    # AAVSO can mark limits such as "<5.0". Keep the raw magnitude type, but
+    # strip comparison marks so the value can still be stored numerically.
+    text = text.lstrip("<>").strip()
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def parse_observed_at(utc_value: str | None, jd: float | None) -> datetime | None:
+    if utc_value:
+        text = utc_value.strip().replace("/", "-").replace("T", " ")
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
+            try:
+                parsed = datetime.strptime(text[: len(datetime.now().strftime(fmt))], fmt)
+                return parsed.replace(tzinfo=timezone.utc)
+            except ValueError:
+                continue
+    if jd is not None:
+        return julian_date_to_datetime(jd)
+    return None
+
+
+def observation_key(obs: dict[str, Any]) -> str:
+    if obs.get("source_observation_id"):
+        return f"{obs['source']}:{obs['source_observation_id']}"
+    return ":".join(
+        str(obs.get(part) or "")
+        for part in ("source", "target", "julian_date", "magnitude", "band", "observer_code")
+    )
+
+
+def load_existing_observations() -> list[dict[str, Any]]:
+    if not OBS_JSON.exists():
+        return []
+    with OBS_JSON.open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+    if isinstance(payload, list):
+        return payload
+    return list(payload.get("observations", []))
+
+
+def build_aavso_url(target: str, band: str, from_jd: float, to_jd: float, delimiter: str) -> str:
+    params = {
+        "DateFormat": "Julian",
+        "RequestedBands": band,
+        "Grid": "true",
+        "view": "api.delim",
+        "ident": target,
+        "fromjd": f"{from_jd:.5f}",
+        "tojd": f"{to_jd:.5f}",
+        "delimiter": delimiter,
+    }
+    return f"{AAVSO_URL}?{urllib.parse.urlencode(params)}"
+
+
+def fetch_text(url: str) -> str:
+    request = urllib.request.Request(
+        url,
+        headers={
+            "User-Agent": "Beetlejuice brightness data fetcher (GitHub Actions)",
+            "Accept": "text/plain,text/html,*/*",
+        },
+    )
+    with urllib.request.urlopen(request, timeout=60) as response:
+        return response.read().decode("utf-8", errors="replace")
+
+
+def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at: str) -> list[dict[str, Any]]:
+    rows: list[dict[str, str]] = []
+    headers: list[str] | None = None
+
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or delimiter not in line:
+            continue
+
+        parts = [part.strip() for part in line.split(delimiter)]
+        normalized = [normalize_header(part) for part in parts]
+
+        if {"jd", "magnitude", "band"}.issubset(set(normalized)):
+            headers = normalized
+            continue
+
+        if headers and len(parts) == len(headers):
+            rows.append(dict(zip(headers, parts)))
+            continue
+
+        if not headers and len(parts) >= 8:
+            columns = FALLBACK_AAVSO_COLUMNS[: len(parts)]
+            rows.append(dict(zip(columns, parts)))
+
+    observations: list[dict[str, Any]] = []
+    for row in rows:
+        jd = parse_float(row.get("jd") or row.get("julian_date"))
+        magnitude = parse_float(row.get("magnitude"))
+        observed_at = parse_observed_at(row.get("utc"), jd)
+        band = row.get("band") or ""
+
+        if jd is None or magnitude is None or observed_at is None or not band:
+            continue
+
+        observation = {
+            "source": "AAVSO",
+            "target": row.get("name") or target,
+            "source_observation_id": row.get("id") or row.get("id_number") or "",
+            "magnitude_type": row.get("magnitude_type") or "",
+            "observed_at_utc": isoformat_z(observed_at),
+            "date_utc": observed_at.date().isoformat(),
+            "julian_date": jd,
+            "magnitude": magnitude,
+            "magnitude_error": parse_float(row.get("uncertainty")),
+            "band": band,
+            "observer_code": row.get("observer_code") or "",
+            "fetched_at_utc": fetched_at,
+            "raw": row,
+        }
+        observations.append(observation)
+
+    return observations
+
+
+def merge_observations(existing: list[dict[str, Any]], new: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    merged: dict[str, dict[str, Any]] = {}
+    for obs in existing + new:
+        merged[observation_key(obs)] = obs
+    return sorted(merged.values(), key=lambda item: (item.get("julian_date") or 0, item.get("source_observation_id") or ""))
+
+
+def median(values: list[float]) -> float:
+    return float(statistics.median(values))
+
+
+def mean(values: list[float]) -> float:
+    return float(statistics.fmean(values))
+
+
+def build_daily_summary(observations: list[dict[str, Any]], *, band: str, generated_at: str) -> dict[str, Any]:
+    grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for obs in observations:
+        if str(obs.get("band", "")).upper() != band.upper():
+            continue
+        if obs.get("magnitude") is None or not obs.get("date_utc"):
+            continue
+        grouped[str(obs["date_utc"])].append(obs)
+
+    days: list[dict[str, Any]] = []
+    for date_utc in sorted(grouped):
+        values = [float(obs["magnitude"]) for obs in grouped[date_utc]]
+        days.append(
+            {
+                "date_utc": date_utc,
+                "source": "AAVSO",
+                "target": DEFAULT_TARGET,
+                "band": band,
+                "observation_count": len(values),
+                "median_magnitude": round(median(values), 4),
+                "mean_magnitude": round(mean(values), 4),
+                "min_magnitude": round(min(values), 4),
+                "max_magnitude": round(max(values), 4),
+            }
+        )
+
+    return {
+        "metadata": {
+            "target": DEFAULT_TARGET,
+            "source": "AAVSO",
+            "band": band,
+            "calculation": "Daily median V-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
+            "generated_at_utc": generated_at,
+            "day_count": len(days),
+            "observation_count": sum(day["observation_count"] for day in days),
+        },
+        "days": days,
+    }
+
+
+def write_json(path: Path, payload: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, indent=2, ensure_ascii=False)
+        handle.write("\n")
+
+
+def write_csv(path: Path, observations: list[dict[str, Any]]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=CSV_FIELDS)
+        writer.writeheader()
+        for obs in observations:
+            writer.writerow({field: obs.get(field, "") for field in CSV_FIELDS})
+
+
+def parse_args(argv: list[str]) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Fetch Betelgeuse brightness observations from AAVSO.")
+    parser.add_argument("--target", default=DEFAULT_TARGET, help="AAVSO target identifier, default: alpha Ori")
+    parser.add_argument("--band", default=DEFAULT_BAND, help="AAVSO band to request, default: V")
+    parser.add_argument("--lookback-days", type=int, default=365, help="Number of days to fetch, default: 365")
+    parser.add_argument("--from-jd", type=float, default=None, help="Override start Julian Date")
+    parser.add_argument("--to-jd", type=float, default=None, help="Override end Julian Date")
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv or sys.argv[1:])
+    run_at = now_utc()
+    fetched_at = isoformat_z(run_at)
+
+    to_jd = args.to_jd if args.to_jd is not None else datetime_to_julian_date(run_at + timedelta(days=1))
+    from_jd = args.from_jd if args.from_jd is not None else datetime_to_julian_date(run_at - timedelta(days=args.lookback_days))
+
+    url = build_aavso_url(args.target, args.band, from_jd, to_jd, DEFAULT_DELIMITER)
+    print(f"Fetching {args.target} {args.band}-band observations from AAVSO")
+    print(f"Range: JD {from_jd:.5f} to {to_jd:.5f}")
+
+    existing = load_existing_observations()
+    text = fetch_text(url)
+    new = parse_aavso_delimited(text, delimiter=DEFAULT_DELIMITER, target=args.target, fetched_at=fetched_at)
+    observations = merge_observations(existing, new)
+
+    observations_payload = {
+        "metadata": {
+            "target": args.target,
+            "source": "AAVSO",
+            "band": args.band,
+            "last_fetch_url": url,
+            "last_checked_at_utc": fetched_at,
+            "new_observations_seen": len(new),
+            "observation_count": len(observations),
+        },
+        "observations": observations,
+    }
+
+    write_json(OBS_JSON, observations_payload)
+    write_csv(OBS_CSV, observations)
+    write_json(DAILY_JSON, build_daily_summary(observations, band=args.band, generated_at=fetched_at))
+
+    print(f"Parsed {len(new)} observations in this fetch")
+    print(f"Stored {len(observations)} total observations")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

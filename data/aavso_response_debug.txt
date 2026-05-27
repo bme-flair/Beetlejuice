@@ -1,7 +1,7 @@
 AAVSO response debug
 ====================
 
-URL: https://vsx.aavso.org/index.php?view=api.delim&ident=alf+Ori&fromjd=2460822.83844&tojd=2461188.83844&delimiter=%40%40%40
+URL: https://vsx.aavso.org/index.php?view=api.delim&ident=alf+Ori&fromjd=2460822.84024&tojd=2461188.84024&delimiter=%40%40%40
 
 Diagnostics:
 {
@@ -9,13 +9,41 @@ Diagnostics:
   "response_lines": 1438,
   "delimiter_count": 37388,
   "candidate_lines": 1438,
-  "parsed_rows_before_validation": 1438,
-  "parsed_observations": 0,
+  "parsed_rows_before_validation": 1437,
+  "parsed_observations": 1415,
   "skipped_malformed_lines": 0,
   "skipped_unparsed_rows": 0,
-  "skipped_wrong_band_rows": 1438,
-  "header_detected": false,
-  "detected_headers": [],
+  "skipped_wrong_band_rows": 22,
+  "header_detected": true,
+  "detected_headers": [
+    "jd",
+    "mag",
+    "uncert",
+    "band",
+    "by",
+    "comcode",
+    "compstar1",
+    "compstar2",
+    "charts",
+    "comment",
+    "transformed",
+    "airmass",
+    "val",
+    "cmag",
+    "kmag",
+    "starname",
+    "obsaffil",
+    "mtype",
+    "adsref",
+    "digitizer",
+    "credit",
+    "obsid",
+    "fainterthan",
+    "obstype",
+    "software",
+    "obsname",
+    "obscountry"
+  ],
   "looks_like_html": false
 }
 

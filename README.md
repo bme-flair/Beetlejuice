@@ -1,15 +1,15 @@
 # Beetlejuice Brightness Tracker
 
-A small web app that collects daily brightness data for Betelgeuse, also known as Alpha Orionis or `alpha Ori` in AAVSO queries.
+A small web app that collects daily brightness data for Betelgeuse, also known as Alpha Orionis. The AAVSO identifier used by the fetcher is `alf Ori`.
 
 ## Data source
 
-The first version uses the AAVSO Light Curve Generator static API-style URL. The fetcher requests visual and V-band observations for `alpha Ori`, stores the raw parsed observations, and builds a daily summary from the selected summary band.
+The first version uses AAVSO data loaded through the VSX/AAVSO delimited endpoint used by the AAVSO static light-curve page. The fetcher requests observations for `alf Ori`, keeps visual and V-band rows, stores the raw parsed observations, and builds a daily summary from the selected summary band.
 
-AAVSO URL pattern used by the script:
+AAVSO data URL pattern used by the script:
 
 ```text
-https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alpha+Ori&fromjd=...&tojd=...&delimiter=%40%40%40
+https://vsx.aavso.org/index.php?view=api.delim&ident=alf+Ori&fromjd=...&tojd=...&delimiter=%40%40%40
 ```
 
 ## Data files
@@ -17,20 +17,27 @@ https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&
 - `data/observations.json` - raw parsed observations plus metadata.
 - `data/observations.csv` - spreadsheet-friendly copy of the raw parsed observations.
 - `data/daily_brightness.json` - one daily summary row per UTC date.
+- `data/brightness_plot.svg` - static graph generated with R and ggplot2.
 
-The daily summary currently uses median `Vis` magnitude for each date, because Betelgeuse has many more visual observations than recent instrument V-band measurements. In astronomy, lower magnitude values mean the star is brighter.
+The daily summary currently uses median `Vis` magnitude for each date, because Betelgeuse has many visual observations. In astronomy, lower magnitude values mean the star is brighter.
 
 ## Updating the data
 
-The GitHub Action in `.github/workflows/update-data.yml` runs once per day and can also be started manually from the Actions tab.
+The GitHub Action in `.github/workflows/update-data.yml` runs once per day and can also be started manually from the Actions tab. It fetches observations, regenerates the JSON/CSV files, generates the SVG graph with R, and commits any changes.
 
-To run it locally:
+To run the data fetch locally:
 
 ```bash
-python scripts/fetch_aavso.py --lookback-days 365 --requested-bands Vis,V --summary-band Vis
+python scripts/fetch_aavso.py --lookback-days 365 --target "alf Ori" --requested-bands "Vis,V" --summary-band "Vis"
 ```
 
-The script uses only the Python standard library.
+To regenerate the graph locally, install `ggplot2` in R and run:
+
+```bash
+Rscript scripts/plot_brightness.R data/observations.csv data/brightness_plot.svg Vis
+```
+
+The Python fetcher uses only the Python standard library. The graph script requires R and `ggplot2`.
 
 ## Viewing the app locally
 

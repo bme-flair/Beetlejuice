@@ -351,17 +351,14 @@ def write_csv(path: Path, observations: list[dict[str, Any]]) -> None:
 
 def write_debug(path: Path, *, url: str, diagnostics: dict[str, Any], text: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    sample = text[:5000]
     with path.open("w", encoding="utf-8") as handle:
         handle.write("AAVSO response debug\n")
         handle.write("====================\n\n")
         handle.write(f"URL: {url}\n\n")
         handle.write("Diagnostics:\n")
         handle.write(json.dumps(diagnostics, indent=2, ensure_ascii=False))
-        handle.write("\n\nFirst 5000 response characters:\n")
-        handle.write(sample)
-        if len(text) > len(sample):
-            handle.write("\n...[truncated]...\n")
+        handle.write("\n\nFull response body follows:\n")
+        handle.write(text)
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:

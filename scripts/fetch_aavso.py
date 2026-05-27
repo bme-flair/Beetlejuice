@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any
 
 AAVSO_URL = "https://www.aavso.org/LCGv2/static.htm"
-DEFAULT_TARGET = "alpha Ori"
+DEFAULT_TARGET = "alf Ori"
 DEFAULT_REQUESTED_BANDS = "Vis,V"
 DEFAULT_SUMMARY_BAND = "Vis"
 DEFAULT_DELIMITER = "@@@"
@@ -29,6 +29,7 @@ DATA_DIR = Path("data")
 OBS_JSON = DATA_DIR / "observations.json"
 OBS_CSV = DATA_DIR / "observations.csv"
 DAILY_JSON = DATA_DIR / "daily_brightness.json"
+DEBUG_TXT = DATA_DIR / "aavso_response_debug.txt"
 
 CSV_FIELDS = [
     "source",
@@ -101,6 +102,7 @@ def normalize_header(value: str) -> str:
         "-": "_",
         "(": "",
         ")": "",
+        ".": "",
     }
     for old, new in replacements.items():
         text = text.replace(old, new)
@@ -174,26 +176,49 @@ def fetch_text(url: str) -> str:
         url,
         headers={
             "User-Agent": "Beetlejuice brightness data fetcher (GitHub Actions)",
-            "Accept": "text/plain,text/html,*/*",
+            "Accept": "text/plain,text/csv,text/html,*/*",
         },
     )
     with urllib.request.urlopen(request, timeout=60) as response:
         return response.read().decode("utf-8", errors="replace")
 
 
-def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at: str) -> list[dict[str, Any]]:
+def looks_like_header(parts: list[str]) -> bool:
+    normalized = {normalize_header(part) for part in parts}
+    return bool({"jd", "magnitude", "band"}.issubset(normalized) or {"julian_date", "magnitude", "band"}.issubset(normalized))
+
+
+def split_candidate_line(line: str, delimiter: str) -> list[str] | None:
+    if delimiter in line:
+        return [part.strip() for part in line.split(delimiter)]
+    if "," in line:
+        try:
+            return next(csv.reader([line]))
+        except csv.Error:
+            return None
+    if "\t" in line:
+        return [part.strip() for part in line.split("\t")]
+    return None
+
+
+def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows: list[dict[str, str]] = []
     headers: list[str] | None = None
+    candidate_lines = 0
+    skipped_malformed = 0
 
     for line in text.splitlines():
         line = line.strip()
-        if not line or delimiter not in line:
+        if not line:
             continue
 
-        parts = [part.strip() for part in line.split(delimiter)]
+        parts = split_candidate_line(line, delimiter)
+        if not parts:
+            continue
+        candidate_lines += 1
         normalized = [normalize_header(part) for part in parts]
 
-        if {"jd", "magnitude", "band"}.issubset(set(normalized)):
+        if looks_like_header(parts):
             headers = normalized
             continue
 
@@ -204,36 +229,53 @@ def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at:
         if not headers and len(parts) >= 8:
             columns = FALLBACK_AAVSO_COLUMNS[: len(parts)]
             rows.append(dict(zip(columns, parts)))
+            continue
+
+        skipped_malformed += 1
 
     observations: list[dict[str, Any]] = []
+    skipped_unparsed = 0
     for row in rows:
         jd = parse_float(row.get("jd") or row.get("julian_date"))
-        magnitude = parse_float(row.get("magnitude"))
-        observed_at = parse_observed_at(row.get("utc"), jd)
-        band = row.get("band") or ""
+        magnitude = parse_float(row.get("magnitude") or row.get("mag"))
+        observed_at = parse_observed_at(row.get("utc") or row.get("date"), jd)
+        band = row.get("band") or row.get("filter") or ""
 
         if jd is None or magnitude is None or observed_at is None or not band:
+            skipped_unparsed += 1
             continue
 
         observations.append(
             {
                 "source": "AAVSO",
                 "target": row.get("name") or target,
-                "source_observation_id": row.get("id") or row.get("id_number") or "",
+                "source_observation_id": row.get("id") or row.get("id_number") or row.get("obsid") or "",
                 "magnitude_type": row.get("magnitude_type") or "",
                 "observed_at_utc": isoformat_z(observed_at),
                 "date_utc": observed_at.date().isoformat(),
                 "julian_date": jd,
                 "magnitude": magnitude,
-                "magnitude_error": parse_float(row.get("uncertainty")),
+                "magnitude_error": parse_float(row.get("uncertainty") or row.get("error") or row.get("err")),
                 "band": band,
-                "observer_code": row.get("observer_code") or "",
+                "observer_code": row.get("observer_code") or row.get("observer") or "",
                 "fetched_at_utc": fetched_at,
                 "raw": row,
             }
         )
 
-    return observations
+    diagnostics = {
+        "response_characters": len(text),
+        "response_lines": len(text.splitlines()),
+        "delimiter_count": text.count(delimiter),
+        "candidate_lines": candidate_lines,
+        "parsed_rows_before_validation": len(rows),
+        "parsed_observations": len(observations),
+        "skipped_malformed_lines": skipped_malformed,
+        "skipped_unparsed_rows": skipped_unparsed,
+        "header_detected": headers is not None,
+        "detected_headers": headers or [],
+    }
+    return observations, diagnostics
 
 
 def merge_observations(existing: list[dict[str, Any]], new: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -251,7 +293,7 @@ def mean(values: list[float]) -> float:
     return float(statistics.fmean(values))
 
 
-def build_daily_summary(observations: list[dict[str, Any]], *, summary_band: str, generated_at: str) -> dict[str, Any]:
+def build_daily_summary(observations: list[dict[str, Any]], *, target: str, summary_band: str, generated_at: str) -> dict[str, Any]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for obs in observations:
         if str(obs.get("band", "")).upper() != summary_band.upper():
@@ -267,7 +309,7 @@ def build_daily_summary(observations: list[dict[str, Any]], *, summary_band: str
             {
                 "date_utc": date_utc,
                 "source": "AAVSO",
-                "target": DEFAULT_TARGET,
+                "target": target,
                 "band": summary_band,
                 "observation_count": len(values),
                 "median_magnitude": round(median(values), 4),
@@ -279,7 +321,7 @@ def build_daily_summary(observations: list[dict[str, Any]], *, summary_band: str
 
     return {
         "metadata": {
-            "target": DEFAULT_TARGET,
+            "target": target,
             "source": "AAVSO",
             "band": summary_band,
             "calculation": f"Daily median {summary_band}-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
@@ -307,9 +349,24 @@ def write_csv(path: Path, observations: list[dict[str, Any]]) -> None:
             writer.writerow({field: obs.get(field, "") for field in CSV_FIELDS})
 
 
+def write_debug(path: Path, *, url: str, diagnostics: dict[str, Any], text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    sample = text[:5000]
+    with path.open("w", encoding="utf-8") as handle:
+        handle.write("AAVSO response debug\n")
+        handle.write("====================\n\n")
+        handle.write(f"URL: {url}\n\n")
+        handle.write("Diagnostics:\n")
+        handle.write(json.dumps(diagnostics, indent=2, ensure_ascii=False))
+        handle.write("\n\nFirst 5000 response characters:\n")
+        handle.write(sample)
+        if len(text) > len(sample):
+            handle.write("\n...[truncated]...\n")
+
+
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Fetch Betelgeuse brightness observations from AAVSO.")
-    parser.add_argument("--target", default=DEFAULT_TARGET, help="AAVSO target identifier, default: alpha Ori")
+    parser.add_argument("--target", default=DEFAULT_TARGET, help="AAVSO target identifier, default: alf Ori")
     parser.add_argument("--requested-bands", default=DEFAULT_REQUESTED_BANDS, help="Comma-separated AAVSO bands to request, default: Vis,V")
     parser.add_argument("--summary-band", default=DEFAULT_SUMMARY_BAND, help="Band to use in daily_brightness.json, default: Vis")
     parser.add_argument("--band", dest="legacy_band", default=None, help="Deprecated alias for --requested-bands and --summary-band")
@@ -337,7 +394,7 @@ def main(argv: list[str] | None = None) -> int:
 
     existing = load_existing_observations()
     text = fetch_text(url)
-    new = parse_aavso_delimited(text, delimiter=DEFAULT_DELIMITER, target=args.target, fetched_at=fetched_at)
+    new, diagnostics = parse_aavso_delimited(text, delimiter=DEFAULT_DELIMITER, target=args.target, fetched_at=fetched_at)
     observations = merge_observations(existing, new)
 
     observations_payload = {
@@ -350,14 +407,17 @@ def main(argv: list[str] | None = None) -> int:
             "last_checked_at_utc": fetched_at,
             "new_observations_seen": len(new),
             "observation_count": len(observations),
+            "diagnostics": diagnostics,
         },
         "observations": observations,
     }
 
     write_json(OBS_JSON, observations_payload)
     write_csv(OBS_CSV, observations)
-    write_json(DAILY_JSON, build_daily_summary(observations, summary_band=summary_band, generated_at=fetched_at))
+    write_json(DAILY_JSON, build_daily_summary(observations, target=args.target, summary_band=summary_band, generated_at=fetched_at))
+    write_debug(DEBUG_TXT, url=url, diagnostics=diagnostics, text=text)
 
+    print(json.dumps(diagnostics, indent=2))
     print(f"Parsed {len(new)} observations in this fetch")
     print(f"Stored {len(observations)} total observations")
     return 0

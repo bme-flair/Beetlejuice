@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="550" viewBox="0 0 1000 550" role="img" aria-labelledby="title desc">
+  <title id="title">Betelgeuse brightness graph placeholder</title>
+  <desc id="desc">This placeholder will be replaced by a ggplot-generated SVG when the data workflow runs.</desc>
+  <rect width="1000" height="550" fill="white"/>
+  <rect x="1" y="1" width="998" height="548" fill="none" stroke="#ddd"/>
+  <text x="500" y="250" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="32" font-weight="700" fill="#222">Brightness graph pending</text>
+  <text x="500" y="300" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" fill="#555">Run the Update brightness data workflow to generate this SVG with R and ggplot2.</text>
+</svg>

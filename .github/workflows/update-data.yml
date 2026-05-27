@@ -21,7 +21,7 @@ jobs:
           python-version: "3.12"
 
       - name: Fetch AAVSO observations
-        run: python scripts/fetch_aavso.py --lookback-days 365 --requested-bands Vis,V --summary-band Vis
+        run: python scripts/fetch_aavso.py --lookback-days 365 --target "alf Ori" --requested-bands "Vis.,V" --summary-band "Vis."
 
       - name: Commit data changes
         run: |

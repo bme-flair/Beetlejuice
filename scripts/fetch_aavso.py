@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 """Fetch Betelgeuse brightness observations from AAVSO and build daily summaries.
 
-This script intentionally uses only the Python standard library so it can run in a
-plain GitHub Actions environment.
+Uses only the Python standard library so it can run in GitHub Actions without dependencies.
 """
 
 from __future__ import annotations
@@ -46,33 +45,6 @@ CSV_FIELDS = [
     "fetched_at_utc",
 ]
 
-FALLBACK_AAVSO_COLUMNS = [
-    "id",
-    "magnitude_type",
-    "name",
-    "jd",
-    "utc",
-    "magnitude",
-    "uncertainty",
-    "band",
-    "obstype",
-    "comp",
-    "cmag",
-    "comp2_check",
-    "kmag",
-    "airmass",
-    "charts",
-    "comment_code",
-    "software",
-    "transformed",
-    "comments",
-    "digitizer",
-    "ads_reference",
-    "observer_code",
-    "affiliation",
-    "credit",
-]
-
 
 def now_utc() -> datetime:
     return datetime.now(timezone.utc).replace(microsecond=0)
@@ -83,28 +55,16 @@ def isoformat_z(value: datetime) -> str:
 
 
 def datetime_to_julian_date(value: datetime) -> float:
-    value = value.astimezone(timezone.utc)
-    unix_seconds = value.timestamp()
-    return unix_seconds / 86400.0 + 2440587.5
+    return value.astimezone(timezone.utc).timestamp() / 86400.0 + 2440587.5
 
 
 def julian_date_to_datetime(jd: float) -> datetime:
-    unix_seconds = (jd - 2440587.5) * 86400.0
-    return datetime.fromtimestamp(unix_seconds, tz=timezone.utc).replace(microsecond=0)
+    return datetime.fromtimestamp((jd - 2440587.5) * 86400.0, tz=timezone.utc).replace(microsecond=0)
 
 
 def normalize_header(value: str) -> str:
     text = value.strip().lower()
-    replacements = {
-        "#": "",
-        "/": "_",
-        " ": "_",
-        "-": "_",
-        "(": "",
-        ")": "",
-        ".": "",
-    }
-    for old, new in replacements.items():
+    for old, new in {"#": "", "/": "_", " ": "_", "-": "_", "(": "", ")": "", ".": ""}.items():
         text = text.replace(old, new)
     while "__" in text:
         text = text.replace("__", "_")
@@ -119,40 +79,30 @@ def parse_band_list(value: str) -> set[str]:
     return {normalize_band(part) for part in value.split(",") if part.strip()}
 
 
+def first_present(row: dict[str, Any], keys: list[str]) -> Any:
+    for key in keys:
+        value = row.get(key)
+        if value not in (None, ""):
+            return value
+    return None
+
+
 def parse_float(value: Any) -> float | None:
     if value is None:
         return None
-    text = str(value).strip()
+    text = str(value).strip().lstrip("<>").strip()
     if not text:
         return None
-    text = text.lstrip("<>").strip()
     try:
         return float(text)
     except ValueError:
         return None
 
 
-def parse_observed_at(utc_value: str | None, jd: float | None) -> datetime | None:
-    if utc_value:
-        text = utc_value.strip().replace("/", "-").replace("T", " ")
-        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y-%m-%d"):
-            try:
-                parsed = datetime.strptime(text[: len(datetime.now().strftime(fmt))], fmt)
-                return parsed.replace(tzinfo=timezone.utc)
-            except ValueError:
-                continue
-    if jd is not None:
-        return julian_date_to_datetime(jd)
-    return None
-
-
 def observation_key(obs: dict[str, Any]) -> str:
     if obs.get("source_observation_id"):
         return f"{obs['source']}:{obs['source_observation_id']}"
-    return ":".join(
-        str(obs.get(part) or "")
-        for part in ("source", "target", "julian_date", "magnitude", "band", "observer_code")
-    )
+    return ":".join(str(obs.get(part) or "") for part in ("source", "target", "julian_date", "magnitude", "band", "observer_code"))
 
 
 def load_existing_observations() -> list[dict[str, Any]]:
@@ -166,9 +116,6 @@ def load_existing_observations() -> list[dict[str, Any]]:
 
 
 def build_aavso_url(target: str, from_jd: float, to_jd: float, delimiter: str) -> str:
-    # The public static light-curve page delegates its data loading to this VSX endpoint.
-    # The static wrapper accepts display parameters such as RequestedBands, but the raw
-    # data URL built by the page only carries view, ident, date range, and delimiter.
     params = {
         "view": "api.delim",
         "ident": target,
@@ -191,11 +138,6 @@ def fetch_text(url: str) -> str:
         return response.read().decode("utf-8", errors="replace")
 
 
-def looks_like_header(parts: list[str]) -> bool:
-    normalized = {normalize_header(part) for part in parts}
-    return bool({"jd", "magnitude", "band"}.issubset(normalized) or {"julian_date", "magnitude", "band"}.issubset(normalized))
-
-
 def split_candidate_line(line: str, delimiter: str) -> list[str] | None:
     if delimiter in line:
         return [part.strip() for part in line.split(delimiter)]
@@ -209,7 +151,19 @@ def split_candidate_line(line: str, delimiter: str) -> list[str] | None:
     return None
 
 
-def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at: str, requested_bands: str) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+def looks_like_header(parts: list[str]) -> bool:
+    normalized = {normalize_header(part) for part in parts}
+    return "jd" in normalized and "band" in normalized and ("mag" in normalized or "magnitude" in normalized)
+
+
+def parse_aavso_delimited(
+    text: str,
+    *,
+    delimiter: str,
+    target: str,
+    fetched_at: str,
+    requested_bands: str,
+) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     rows: list[dict[str, str]] = []
     headers: list[str] | None = None
     candidate_lines = 0
@@ -225,19 +179,13 @@ def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at:
         if not parts:
             continue
         candidate_lines += 1
-        normalized = [normalize_header(part) for part in parts]
 
         if looks_like_header(parts):
-            headers = normalized
+            headers = [normalize_header(part) for part in parts]
             continue
 
         if headers and len(parts) == len(headers):
             rows.append(dict(zip(headers, parts)))
-            continue
-
-        if not headers and len(parts) >= 8:
-            columns = FALLBACK_AAVSO_COLUMNS[: len(parts)]
-            rows.append(dict(zip(columns, parts)))
             continue
 
         skipped_malformed += 1
@@ -245,33 +193,33 @@ def parse_aavso_delimited(text: str, *, delimiter: str, target: str, fetched_at:
     observations: list[dict[str, Any]] = []
     skipped_unparsed = 0
     skipped_band = 0
+
     for row in rows:
-        jd = parse_float(row.get("jd") or row.get("julian_date"))
-        magnitude = parse_float(row.get("magnitude") or row.get("mag"))
-        observed_at = parse_observed_at(row.get("utc") or row.get("date"), jd)
-        band = row.get("band") or row.get("filter") or ""
+        jd = parse_float(first_present(row, ["jd", "julian_date"]))
+        magnitude = parse_float(first_present(row, ["mag", "magnitude"]))
+        band = str(first_present(row, ["band", "filter"]) or "").strip()
 
         if allowed_bands and normalize_band(band) not in allowed_bands:
             skipped_band += 1
             continue
-
-        if jd is None or magnitude is None or observed_at is None or not band:
+        if jd is None or magnitude is None or not band:
             skipped_unparsed += 1
             continue
 
+        observed_at = julian_date_to_datetime(jd)
         observations.append(
             {
                 "source": "AAVSO",
-                "target": row.get("name") or target,
-                "source_observation_id": row.get("id") or row.get("id_number") or row.get("obsid") or "",
-                "magnitude_type": row.get("magnitude_type") or "",
+                "target": first_present(row, ["starname", "name"]) or target,
+                "source_observation_id": str(first_present(row, ["obsid", "id", "id_number"]) or ""),
+                "magnitude_type": str(first_present(row, ["mtype", "magnitude_type"]) or ""),
                 "observed_at_utc": isoformat_z(observed_at),
                 "date_utc": observed_at.date().isoformat(),
                 "julian_date": jd,
                 "magnitude": magnitude,
-                "magnitude_error": parse_float(row.get("uncertainty") or row.get("error") or row.get("err")),
+                "magnitude_error": parse_float(first_present(row, ["uncert", "uncertainty", "error", "err"])),
                 "band": band,
-                "observer_code": row.get("observer_code") or row.get("observer") or "",
+                "observer_code": str(first_present(row, ["by", "observer_code", "observer"]) or ""),
                 "fetched_at_utc": fetched_at,
                 "raw": row,
             }
@@ -301,21 +249,11 @@ def merge_observations(existing: list[dict[str, Any]], new: list[dict[str, Any]]
     return sorted(merged.values(), key=lambda item: (item.get("julian_date") or 0, item.get("source_observation_id") or ""))
 
 
-def median(values: list[float]) -> float:
-    return float(statistics.median(values))
-
-
-def mean(values: list[float]) -> float:
-    return float(statistics.fmean(values))
-
-
 def build_daily_summary(observations: list[dict[str, Any]], *, target: str, summary_band: str, generated_at: str) -> dict[str, Any]:
     grouped: dict[str, list[dict[str, Any]]] = defaultdict(list)
     wanted = normalize_band(summary_band)
     for obs in observations:
         if normalize_band(obs.get("band", "")) != wanted:
-            continue
-        if obs.get("magnitude") is None or not obs.get("date_utc"):
             continue
         grouped[str(obs["date_utc"])].append(obs)
 
@@ -329,8 +267,8 @@ def build_daily_summary(observations: list[dict[str, Any]], *, target: str, summ
                 "target": target,
                 "band": summary_band,
                 "observation_count": len(values),
-                "median_magnitude": round(median(values), 4),
-                "mean_magnitude": round(mean(values), 4),
+                "median_magnitude": round(float(statistics.median(values)), 4),
+                "mean_magnitude": round(float(statistics.fmean(values)), 4),
                 "min_magnitude": round(min(values), 4),
                 "max_magnitude": round(max(values), 4),
             }

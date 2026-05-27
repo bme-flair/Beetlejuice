@@ -28,7 +28,6 @@ DATA_DIR = Path("data")
 OBS_JSON = DATA_DIR / "observations.json"
 OBS_CSV = DATA_DIR / "observations.csv"
 DAILY_JSON = DATA_DIR / "daily_brightness.json"
-DEBUG_TXT = DATA_DIR / "aavso_response_debug.txt"
 
 CSV_FIELDS = [
     "source",
@@ -304,21 +303,6 @@ def write_csv(path: Path, observations: list[dict[str, Any]]) -> None:
             writer.writerow({field: obs.get(field, "") for field in CSV_FIELDS})
 
 
-def write_debug(path: Path, *, url: str, diagnostics: dict[str, Any], text: str) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8") as handle:
-        handle.write("AAVSO response debug\n")
-        handle.write("====================\n\n")
-        handle.write(f"URL: {url}\n\n")
-        handle.write("Diagnostics:\n")
-        handle.write(json.dumps(diagnostics, indent=2, ensure_ascii=False))
-        handle.write("\n\nFirst 5000 response characters:\n")
-        sample = text[:5000]
-        handle.write(sample)
-        if len(text) > len(sample):
-            handle.write("\n...[truncated]...\n")
-
-
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Fetch Betelgeuse brightness observations from AAVSO.")
     parser.add_argument("--target", default=DEFAULT_TARGET, help="AAVSO target identifier, default: alf Ori")
@@ -370,7 +354,6 @@ def main(argv: list[str] | None = None) -> int:
     write_json(OBS_JSON, observations_payload)
     write_csv(OBS_CSV, observations)
     write_json(DAILY_JSON, build_daily_summary(observations, target=args.target, summary_band=summary_band, generated_at=fetched_at))
-    write_debug(DEBUG_TXT, url=url, diagnostics=diagnostics, text=text)
 
     print(json.dumps(diagnostics, indent=2))
     print(f"Parsed {len(new)} observations in this fetch")

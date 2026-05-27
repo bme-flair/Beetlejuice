@@ -4,8 +4,8 @@
     "source": "AAVSO",
     "requested_bands": "Vis,V",
     "summary_band": "Vis",
-    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alf+Ori&fromjd=2460822.81884&tojd=2461188.81884&delimiter=%40%40%40",
-    "last_checked_at_utc": "2026-05-27T07:39:08Z",
+    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alf+Ori&fromjd=2460822.83532&tojd=2461188.83532&delimiter=%40%40%40",
+    "last_checked_at_utc": "2026-05-27T08:02:52Z",
     "new_observations_seen": 0,
     "observation_count": 0,
     "diagnostics": {

@@ -4,21 +4,23 @@
     "source": "AAVSO",
     "requested_bands": "Vis,V",
     "summary_band": "Vis",
-    "last_fetch_url": "https://www.aavso.org/LCGv2/static.htm?DateFormat=Julian&RequestedBands=Vis%2CV&Grid=true&view=api.delim&ident=alf+Ori&fromjd=2460822.83532&tojd=2461188.83532&delimiter=%40%40%40",
-    "last_checked_at_utc": "2026-05-27T08:02:52Z",
+    "last_fetch_url": "https://vsx.aavso.org/index.php?view=api.delim&ident=alf+Ori&fromjd=2460822.83844&tojd=2461188.83844&delimiter=%40%40%40",
+    "last_checked_at_utc": "2026-05-27T08:07:21Z",
     "new_observations_seen": 0,
     "observation_count": 0,
     "diagnostics": {
-      "response_characters": 52068,
-      "response_lines": 464,
-      "delimiter_count": 1,
-      "candidate_lines": 101,
-      "parsed_rows_before_validation": 52,
+      "response_characters": 284056,
+      "response_lines": 1438,
+      "delimiter_count": 37388,
+      "candidate_lines": 1438,
+      "parsed_rows_before_validation": 1438,
       "parsed_observations": 0,
-      "skipped_malformed_lines": 49,
-      "skipped_unparsed_rows": 52,
+      "skipped_malformed_lines": 0,
+      "skipped_unparsed_rows": 0,
+      "skipped_wrong_band_rows": 1438,
       "header_detected": false,
-      "detected_headers": []
+      "detected_headers": [],
+      "looks_like_html": false
     }
   },
   "observations": []

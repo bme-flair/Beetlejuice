@@ -5,87 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Beetlejuice Brightness Tracker</title>
   <style>
-    :root {
-      color-scheme: light dark;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.5;
-    }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      background: radial-gradient(circle at top, rgba(255, 136, 0, 0.22), transparent 34rem);
-    }
-    main {
-      width: min(64rem, calc(100% - 2rem));
-      padding: 2rem;
-      border: 1px solid color-mix(in srgb, CanvasText 14%, transparent);
-      border-radius: 1.5rem;
-      background: color-mix(in srgb, Canvas 92%, transparent);
-      box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.14);
-    }
-    h1 {
-      margin: 0 0 0.5rem;
-      font-size: clamp(2rem, 6vw, 4rem);
-      letter-spacing: -0.06em;
-    }
-    .subtitle {
-      margin: 0 0 2rem;
-      color: color-mix(in srgb, CanvasText 65%, transparent);
-      font-size: 1.1rem;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-    .card, .chart-card {
-      padding: 1rem;
-      border: 1px solid color-mix(in srgb, CanvasText 12%, transparent);
-      border-radius: 1rem;
-      background: color-mix(in srgb, CanvasText 4%, Canvas);
-    }
-    .chart-card {
-      margin: 1.5rem 0;
-      overflow: hidden;
-    }
-    .chart-card h2 {
-      margin: 0 0 0.75rem;
-      font-size: 1.2rem;
-    }
-    .chart-card img {
-      display: block;
-      width: 100%;
-      height: auto;
-      border-radius: 0.75rem;
-      background: white;
-    }
-    .label {
-      display: block;
-      color: color-mix(in srgb, CanvasText 60%, transparent);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .value {
-      display: block;
-      margin-top: 0.35rem;
-      font-size: 1.6rem;
-      font-weight: 750;
-    }
-    .note {
-      color: color-mix(in srgb, CanvasText 70%, transparent);
-      font-size: 0.95rem;
-    }
-    .error {
-      color: #b00020;
-      font-weight: 650;
-    }
-    code {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    }
+    :root { color-scheme: light dark; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; line-height: 1.5; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: radial-gradient(circle at top, rgba(255, 136, 0, 0.22), transparent 34rem); }
+    main { width: min(64rem, calc(100% - 2rem)); padding: 2rem; border: 1px solid color-mix(in srgb, CanvasText 14%, transparent); border-radius: 1.5rem; background: color-mix(in srgb, Canvas 92%, transparent); box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.14); }
+    h1 { margin: 0 0 0.5rem; font-size: clamp(2rem, 6vw, 4rem); letter-spacing: -0.06em; }
+    .subtitle { margin: 0 0 2rem; color: color-mix(in srgb, CanvasText 65%, transparent); font-size: 1.1rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+    .card, .panel { padding: 1rem; border: 1px solid color-mix(in srgb, CanvasText 12%, transparent); border-radius: 1rem; background: color-mix(in srgb, CanvasText 4%, Canvas); }
+    .panel { margin: 1.5rem 0; overflow: hidden; }
+    .panel h2 { margin: 0 0 0.75rem; font-size: 1.2rem; }
+    .panel img { display: block; width: 100%; height: auto; border-radius: 0.75rem; background: white; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+    th, td { padding: 0.65rem 0.5rem; border-bottom: 1px solid color-mix(in srgb, CanvasText 12%, transparent); text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    th { color: color-mix(in srgb, CanvasText 65%, transparent); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.07em; }
+    .label { display: block; color: color-mix(in srgb, CanvasText 60%, transparent); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.08em; }
+    .value { display: block; margin-top: 0.35rem; font-size: 1.6rem; font-weight: 750; }
+    .note { color: color-mix(in srgb, CanvasText 70%, transparent); font-size: 0.95rem; }
+    .delta-brighter { font-weight: 750; }
+    .delta-fainter { color: color-mix(in srgb, CanvasText 70%, transparent); }
+    .error { color: #b00020; font-weight: 650; }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   </style>
 </head>
 <body>
@@ -94,61 +35,76 @@
     <p class="subtitle">Daily visual magnitude summary for Betelgeuse / Alpha Orionis.</p>
 
     <section class="grid" aria-live="polite">
-      <div class="card">
-        <span class="label">Latest date</span>
-        <span class="value" id="latest-date">Loading...</span>
-      </div>
-      <div class="card">
-        <span class="label">Median magnitude</span>
-        <span class="value" id="latest-mag">Loading...</span>
-      </div>
-      <div class="card">
-        <span class="label">Observations that day</span>
-        <span class="value" id="latest-count">Loading...</span>
-      </div>
-      <div class="card">
-        <span class="label">Stored days</span>
-        <span class="value" id="day-count">Loading...</span>
-      </div>
+      <div class="card"><span class="label">Latest date</span><span class="value" id="latest-date">Loading...</span></div>
+      <div class="card"><span class="label">Median magnitude</span><span class="value" id="latest-mag">Loading...</span></div>
+      <div class="card"><span class="label">Observations that day</span><span class="value" id="latest-count">Loading...</span></div>
+      <div class="card"><span class="label">Stored days</span><span class="value" id="day-count">Loading...</span></div>
     </section>
 
-    <section class="chart-card" aria-labelledby="chart-title">
-      <h2 id="chart-title">Brightness over time</h2>
+    <section class="panel" aria-labelledby="recent-chart-title">
+      <h2 id="recent-chart-title">Recent focus</h2>
+      <img src="data/recent_brightness_plot.svg" alt="Recent Betelgeuse daily median visual magnitude compared with a cycle-phase reference.">
+      <p class="note">Dashed reference uses previous observations at a similar phase of an approximate 420-day brightness cycle. Treat it as context, not a prediction.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="recent-table-title">
+      <h2 id="recent-table-title">Past 10 calendar days</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Median mag</th><th>Obs</th><th>Cycle ref</th><th>Delta</th></tr></thead>
+          <tbody id="recent-table-body"><tr><td>Loading...</td><td></td><td></td><td></td><td></td></tr></tbody>
+        </table>
+      </div>
+      <p class="note" id="recent-table-note">Reading <code>data/recent_brightness.json</code>...</p>
+    </section>
+
+    <section class="panel" aria-labelledby="chart-title">
+      <h2 id="chart-title">Long-term brightness</h2>
       <img src="data/brightness_plot.svg" alt="Line chart of Betelgeuse daily median visual magnitude from AAVSO observations. Lower magnitude values are brighter.">
     </section>
 
     <p class="note" id="metadata">Reading <code>data/daily_brightness.json</code>...</p>
-    <p class="note">Magnitude is inverted: lower numbers mean brighter. The graph is generated with R and ggplot2.</p>
+    <p class="note">Magnitude is inverted: lower numbers mean brighter. The graphs are generated with R and ggplot2.</p>
   </main>
 
   <script>
-    const setText = (id, text) => {
-      document.getElementById(id).textContent = text;
+    const setText = (id, text) => { document.getElementById(id).textContent = text; };
+    const magnitude = (value) => (value === null || value === undefined || Number.isNaN(Number(value))) ? "--" : Number(value).toFixed(3);
+    const deltaText = (value) => {
+      if (value === null || value === undefined || Number.isNaN(Number(value))) return "--";
+      const number = Number(value);
+      return `${number > 0 ? "+" : ""}${number.toFixed(3)}`;
     };
+
+    function setRecentMessage(message) {
+      const body = document.getElementById("recent-table-body");
+      body.replaceChildren();
+      const row = document.createElement("tr");
+      const cell = document.createElement("td");
+      cell.textContent = message;
+      row.append(cell, document.createElement("td"), document.createElement("td"), document.createElement("td"), document.createElement("td"));
+      body.append(row);
+    }
 
     async function loadBrightness() {
       try {
         const response = await fetch("data/daily_brightness.json", { cache: "no-store" });
-        if (!response.ok) {
-          throw new Error(`Could not load data: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`Could not load data: ${response.status}`);
         const payload = await response.json();
         const days = payload.days || [];
         setText("day-count", String(days.length));
-
         if (days.length === 0) {
           setText("latest-date", "No data yet");
           setText("latest-mag", "--");
           setText("latest-count", "0");
-          document.getElementById("metadata").innerHTML = "No observations have been stored yet. Run <code>python scripts/fetch_aavso.py --lookback-days 365</code> or trigger the GitHub Action.";
+          setText("metadata", "No observations have been stored yet. Trigger the GitHub Action to fetch data.");
           return;
         }
-
         const latest = days[days.length - 1];
         setText("latest-date", latest.date_utc);
-        setText("latest-mag", Number(latest.median_magnitude).toFixed(3));
+        setText("latest-mag", magnitude(latest.median_magnitude));
         setText("latest-count", String(latest.observation_count));
-        document.getElementById("metadata").textContent = `Source: ${payload.metadata.source}, band: ${payload.metadata.band}, generated: ${payload.metadata.generated_at_utc || "unknown"}`;
+        setText("metadata", `Source: ${payload.metadata.source}, band: ${payload.metadata.band}, generated: ${payload.metadata.generated_at_utc || "unknown"}`);
       } catch (error) {
         setText("latest-date", "Error");
         setText("latest-mag", "--");
@@ -160,7 +116,43 @@
       }
     }
 
+    async function loadRecentTable() {
+      const body = document.getElementById("recent-table-body");
+      const note = document.getElementById("recent-table-note");
+      try {
+        const response = await fetch("data/recent_brightness.json", { cache: "no-store" });
+        if (!response.ok) throw new Error(`Could not load recent table: ${response.status}`);
+        const payload = await response.json();
+        const rows = payload.rows || [];
+        if (rows.length === 0) {
+          setRecentMessage("No recent table data yet.");
+          note.textContent = "Run the data workflow to generate the recent table.";
+          return;
+        }
+        body.replaceChildren();
+        for (const rowData of rows) {
+          const row = document.createElement("tr");
+          const values = [rowData.date_utc, magnitude(rowData.median_magnitude), rowData.observation_count ?? 0, magnitude(rowData.cycle_reference_magnitude), deltaText(rowData.delta_from_reference)];
+          for (const value of values) {
+            const cell = document.createElement("td");
+            cell.textContent = value;
+            row.appendChild(cell);
+          }
+          const deltaCell = row.lastElementChild;
+          deltaCell.className = Number(rowData.delta_from_reference) < 0 ? "delta-brighter" : "delta-fainter";
+          body.appendChild(row);
+        }
+        const meta = payload.metadata || {};
+        note.textContent = `Cycle reference: ~${meta.cycle_period_days || 420} days, plus/minus ${meta.phase_window_days || 21} days. Negative delta means brighter than the reference.`;
+      } catch (error) {
+        setRecentMessage("Error loading recent table.");
+        note.classList.add("error");
+        note.textContent = error.message;
+      }
+    }
+
     loadBrightness();
+    loadRecentTable();
   </script>
 </body>
 </html>

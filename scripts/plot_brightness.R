@@ -13,6 +13,10 @@ if (!requireNamespace("ggplot2", quietly = TRUE)) {
   stop("The ggplot2 package is required. Install it with install.packages('ggplot2').", call. = FALSE)
 }
 
+if (!requireNamespace("svglite", quietly = TRUE)) {
+  stop("The svglite package is required to save SVG output. Install it with install.packages('svglite').", call. = FALSE)
+}
+
 normalize_band <- function(x) {
   toupper(sub("\\.$", "", trimws(as.character(x))))
 }
@@ -94,7 +98,7 @@ ggplot2::ggsave(
   width = 10,
   height = 5.5,
   units = "in",
-  device = "svg"
+  device = svglite::svglite
 )
 
 message(sprintf("Wrote %s", output_path))

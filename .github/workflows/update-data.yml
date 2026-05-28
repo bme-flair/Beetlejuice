@@ -36,17 +36,29 @@ jobs:
       - name: Generate long-term brightness graph
         run: Rscript scripts/plot_brightness.R data/observations.csv data/brightness_plot.svg Vis
 
+      - name: Commit historic data and graph
+        run: |
+          if [[ -n "$(git status --porcelain data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg)" ]]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg
+            git commit -m "Update historic brightness data"
+            git push
+          else
+            echo "No historic data changes to commit."
+          fi
+
       - name: Generate recent brightness graph and table
         run: Rscript scripts/plot_recent_brightness.R data/observations.csv data/recent_brightness_plot.svg data/recent_brightness.json Vis 420 21
 
-      - name: Commit data changes
+      - name: Commit recent brightness view
         run: |
-          if [[ -n "$(git status --porcelain data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg data/recent_brightness_plot.svg data/recent_brightness.json)" ]]; then
+          if [[ -n "$(git status --porcelain data/recent_brightness_plot.svg data/recent_brightness.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg data/recent_brightness_plot.svg data/recent_brightness.json
-            git commit -m "Update brightness data"
+            git add data/recent_brightness_plot.svg data/recent_brightness.json
+            git commit -m "Update recent brightness view"
             git push
           else
-            echo "No data changes to commit."
+            echo "No recent view changes to commit."
           fi

@@ -23,21 +23,21 @@ The daily summary currently uses median `Vis` magnitude for each date, because B
 
 ## Updating the data
 
-The GitHub Action in `.github/workflows/update-data.yml` runs once per day and can also be started manually from the Actions tab. It fetches observations, regenerates the JSON/CSV files, generates the SVG graph with R, and commits any changes.
+The GitHub Action in `.github/workflows/update-data.yml` runs once per day and can also be started manually from the Actions tab. It fetches a rolling 10-year window of observations, regenerates the JSON/CSV files, generates the SVG graph with R, and commits any changes.
 
 To run the data fetch locally:
 
 ```bash
-python scripts/fetch_aavso.py --lookback-days 365 --target "alf Ori" --requested-bands "Vis,V" --summary-band "Vis"
+python scripts/fetch_aavso.py --lookback-days 3650 --target "alf Ori" --requested-bands "Vis,V" --summary-band "Vis"
 ```
 
-To regenerate the graph locally, install `ggplot2` in R and run:
+To regenerate the graph locally, install `ggplot2` and `svglite` in R and run:
 
 ```bash
 Rscript scripts/plot_brightness.R data/observations.csv data/brightness_plot.svg Vis
 ```
 
-The Python fetcher uses only the Python standard library. The graph script requires R and `ggplot2`.
+The Python fetcher uses only the Python standard library. The graph script requires R, `ggplot2`, and `svglite`.
 
 ## Viewing the app locally
 

@@ -1,8 +1,82 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="550" viewBox="0 0 1000 550" role="img" aria-labelledby="title desc">
-  <title id="title">Recent Betelgeuse brightness graph placeholder</title>
-  <desc id="desc">This placeholder will be replaced by a ggplot-generated recent-focus SVG when the data workflow runs.</desc>
-  <rect width="1000" height="550" fill="white"/>
-  <rect x="1" y="1" width="998" height="548" fill="none" stroke="#ddd"/>
-  <text x="500" y="250" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="32" font-weight="700" fill="#222">Recent graph pending</text>
-  <text x="500" y="300" text-anchor="middle" font-family="system-ui, -apple-system, Segoe UI, sans-serif" font-size="18" fill="#555">Run the Update brightness data workflow to generate this SVG with R and ggplot2.</text>
+<?xml version='1.0' encoding='UTF-8' ?>
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='720.00pt' height='396.00pt' viewBox='0 0 720.00 396.00'>
+<g class='svglite'>
+<defs>
+  <style type='text/css'><![CDATA[
+    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {
+      fill: none;
+      stroke: #000000;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-miterlimit: 10.00;
+    }
+    .svglite text {
+      white-space: pre;
+    }
+    .svglite g.glyphgroup path {
+      fill: inherit;
+      stroke: none;
+    }
+  ]]></style>
+</defs>
+<rect width='100%' height='100%' style='stroke: none; fill: #FFFFFF;'/>
+<defs>
+  <clipPath id='cpMC4wMHw3MjAuMDB8MC4wMHwzOTYuMDA='>
+    <rect x='0.00' y='0.00' width='720.00' height='396.00' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHwzOTYuMDA=)'>
+<rect x='0.00' y='0.000000000000057' width='720.00' height='396.00' style='stroke-width: 1.36; stroke: none; fill: #FFFFFF;' />
+</g>
+<defs>
+  <clipPath id='cpNDQuODF8NzEzLjAzfDQ4LjUwfDM1NS43NQ=='>
+    <rect x='44.81' y='48.50' width='668.21' height='307.24' />
+  </clipPath>
+</defs>
+<g clip-path='url(#cpNDQuODF8NzEzLjAzfDQ4LjUwfDM1NS43NQ==)'>
+<polyline points='44.81,62.47 713.03,62.47 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='44.81,118.33 713.03,118.33 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='44.81,174.19 713.03,174.19 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='44.81,230.06 713.03,230.06 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='44.81,285.92 713.03,285.92 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='44.81,341.78 713.03,341.78 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='54.24,355.75 54.24,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='200.87,355.75 200.87,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='347.50,355.75 347.50,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='494.13,355.75 494.13,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='640.76,355.75 640.76,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
+<polyline points='75.19,202.13 96.13,218.88 117.08,218.88 138.03,230.06 158.97,230.06 179.92,230.06 200.87,230.06 221.82,230.06 242.76,230.06 263.71,230.06 284.66,230.06 305.60,230.06 326.55,230.06 347.50,230.06 368.45,230.06 389.39,230.06 410.34,230.06 431.29,230.06 452.23,230.06 473.18,230.06 494.13,230.06 515.08,230.06 536.02,230.06 556.97,230.06 577.92,230.06 598.86,230.06 619.81,230.06 640.76,230.06 661.71,230.06 682.65,230.06 ' style='stroke-width: 1.49; stroke: #000000; stroke-opacity: 0.75; stroke-dasharray: 7.97,7.97; stroke-linecap: butt;' />
+<polyline points='75.19,277.54 96.13,283.12 117.08,313.85 138.03,297.09 179.92,230.06 347.50,313.85 368.45,341.78 389.39,230.06 410.34,244.02 431.29,118.33 452.23,174.19 494.13,174.19 682.65,62.47 ' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<circle cx='75.19' cy='277.54' r='3.94' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='96.13' cy='283.12' r='3.94' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='117.08' cy='313.85' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='138.03' cy='297.09' r='3.94' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='179.92' cy='230.06' r='4.72' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='347.50' cy='313.85' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='368.45' cy='341.78' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='389.39' cy='230.06' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='410.34' cy='244.02' r='3.94' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='431.29' cy='118.33' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='452.23' cy='174.19' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='494.13' cy='174.19' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='682.65' cy='62.47' r='2.92' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+</g>
+<g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHwzOTYuMDA=)'>
+<text x='38.54' y='66.32' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='15.55px' lengthAdjust='spacingAndGlyphs'>0.2</text>
+<text x='38.54' y='122.18' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='15.55px' lengthAdjust='spacingAndGlyphs'>0.3</text>
+<text x='38.54' y='178.04' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='15.55px' lengthAdjust='spacingAndGlyphs'>0.4</text>
+<text x='38.54' y='233.90' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='15.55px' lengthAdjust='spacingAndGlyphs'>0.5</text>
+<text x='38.54' y='289.77' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='15.55px' lengthAdjust='spacingAndGlyphs'>0.6</text>
+<text x='38.54' y='345.63' text-anchor='end' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='15.55px' lengthAdjust='spacingAndGlyphs'>0.7</text>
+<text x='54.24' y='369.72' text-anchor='middle' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='32.95px' lengthAdjust='spacingAndGlyphs'>Apr 27</text>
+<text x='200.87' y='369.72' text-anchor='middle' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='36.67px' lengthAdjust='spacingAndGlyphs'>May 04</text>
+<text x='347.50' y='369.72' text-anchor='middle' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='35.84px' lengthAdjust='spacingAndGlyphs'>May 11</text>
+<text x='494.13' y='369.72' text-anchor='middle' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='36.67px' lengthAdjust='spacingAndGlyphs'>May 18</text>
+<text x='640.76' y='369.72' text-anchor='middle' style='font-size: 11.20px;fill: #4D4D4D; font-family: "Liberation Sans";' textLength='36.67px' lengthAdjust='spacingAndGlyphs'>May 25</text>
+<text transform='translate(16.60,202.13) rotate(-90)' text-anchor='middle' style='font-size: 14.00px; font-family: "Liberation Sans";' textLength='250.19px' lengthAdjust='spacingAndGlyphs'>Median Vis magnitude (lower is brighter)</text>
+<text x='44.81' y='38.63' style='font-size: 14.00px; font-family: "Liberation Sans";' textLength='387.41px' lengthAdjust='spacingAndGlyphs'>Last 30 days vs. same phase of an approximate 420-day cycle</text>
+<text x='44.81' y='18.54' style='font-size: 16.80px; font-weight: bold; font-family: "Liberation Sans";' textLength='240.89px' lengthAdjust='spacingAndGlyphs'>Recent Betelgeuse brightness</text>
+<text x='44.81' y='386.71' style='font-size: 11.20px; font-family: "Liberation Sans";' textLength='623.84px' lengthAdjust='spacingAndGlyphs'>Solid = recent daily median. Dashed = historical cycle-phase median within +/- 21 days; reference excludes the latest 60 days.</text>
+</g>
+</g>
 </svg>

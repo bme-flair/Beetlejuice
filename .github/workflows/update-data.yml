@@ -28,6 +28,7 @@ jobs:
         with:
           packages: |
             any::ggplot2
+            any::svglite
 
       - name: Fetch AAVSO observations
         run: python scripts/fetch_aavso.py --lookback-days 365 --target "alf Ori" --requested-bands "Vis,V" --summary-band "Vis"

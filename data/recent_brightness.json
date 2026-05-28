@@ -1,0 +1,11 @@
+{
+  "metadata": {
+    "summary_band": "Vis",
+    "latest_data_date": null,
+    "cycle_period_days": 420,
+    "phase_window_days": 21,
+    "recent_table_days": 10,
+    "generated_at_utc": null
+  },
+  "rows": []
+}

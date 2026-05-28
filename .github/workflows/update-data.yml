@@ -33,15 +33,18 @@ jobs:
       - name: Fetch AAVSO observations
         run: python scripts/fetch_aavso.py --lookback-days 3650 --target "alf Ori" --requested-bands "Vis,V" --summary-band "Vis"
 
-      - name: Generate brightness graph
+      - name: Generate long-term brightness graph
         run: Rscript scripts/plot_brightness.R data/observations.csv data/brightness_plot.svg Vis
+
+      - name: Generate recent brightness graph and table
+        run: Rscript scripts/plot_recent_brightness.R data/observations.csv data/recent_brightness_plot.svg data/recent_brightness.json Vis 420 21
 
       - name: Commit data changes
         run: |
-          if [[ -n "$(git status --porcelain data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg)" ]]; then
+          if [[ -n "$(git status --porcelain data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg data/recent_brightness_plot.svg data/recent_brightness.json)" ]]; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg
+            git add data/observations.json data/observations.csv data/daily_brightness.json data/brightness_plot.svg data/recent_brightness_plot.svg data/recent_brightness.json
             git commit -m "Update brightness data"
             git push
           else

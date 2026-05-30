@@ -4,7 +4,7 @@
     "source": "AAVSO",
     "band": "Vis",
     "calculation": "Daily median Vis-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
-    "generated_at_utc": "2026-05-29T07:05:28Z",
+    "generated_at_utc": "2026-05-30T06:32:15Z",
     "day_count": 2738,
     "observation_count": 15946
   },

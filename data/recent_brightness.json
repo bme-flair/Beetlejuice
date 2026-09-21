@@ -5,7 +5,7 @@
     "cycle_period_days": 420,
     "phase_window_days": 21,
     "recent_table_days": 10,
-    "generated_at_utc": "2026-09-20T08:38:14Z"
+    "generated_at_utc": "2026-09-21T08:59:37Z"
   },
   "rows": [
     {"date_utc": "2026-09-10", "median_magnitude": 0.525, "observation_count": 4, "cycle_reference_magnitude": 0.6, "cycle_reference_count": 213, "delta_from_reference": -0.075},
@@ -17,6 +17,6 @@
     {"date_utc": "2026-09-16", "median_magnitude": 0.62, "observation_count": 2, "cycle_reference_magnitude": 0.5725, "cycle_reference_count": 216, "delta_from_reference": 0.0475},
     {"date_utc": "2026-09-17", "median_magnitude": null, "observation_count": 0, "cycle_reference_magnitude": 0.5725, "cycle_reference_count": 216, "delta_from_reference": null},
     {"date_utc": "2026-09-18", "median_magnitude": 0.555, "observation_count": 2, "cycle_reference_magnitude": 0.56, "cycle_reference_count": 218, "delta_from_reference": -0.005},
-    {"date_utc": "2026-09-19", "median_magnitude": 0.6, "observation_count": 3, "cycle_reference_magnitude": 0.56, "cycle_reference_count": 220, "delta_from_reference": 0.04}
+    {"date_utc": "2026-09-19", "median_magnitude": 0.6, "observation_count": 5, "cycle_reference_magnitude": 0.56, "cycle_reference_count": 220, "delta_from_reference": 0.04}
   ]
 }

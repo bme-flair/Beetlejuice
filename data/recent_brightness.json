@@ -5,7 +5,7 @@
     "cycle_period_days": 420,
     "phase_window_days": 21,
     "recent_table_days": 10,
-    "generated_at_utc": "2026-09-21T08:59:37Z"
+    "generated_at_utc": "2026-09-22T08:34:46Z"
   },
   "rows": [
     {"date_utc": "2026-09-10", "median_magnitude": 0.525, "observation_count": 4, "cycle_reference_magnitude": 0.6, "cycle_reference_count": 213, "delta_from_reference": -0.075},

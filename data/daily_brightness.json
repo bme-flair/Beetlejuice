@@ -4,9 +4,9 @@
     "source": "AAVSO",
     "band": "Vis",
     "calculation": "Daily median Vis-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
-    "generated_at_utc": "2026-10-15T08:20:13Z",
-    "day_count": 2814,
-    "observation_count": 16176
+    "generated_at_utc": "2026-10-16T08:12:57Z",
+    "day_count": 2815,
+    "observation_count": 16179
   },
   "days": [
     {
@@ -30957,11 +30957,22 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 1,
-      "median_magnitude": 0.8,
-      "mean_magnitude": 0.8,
+      "observation_count": 2,
+      "median_magnitude": 0.88,
+      "mean_magnitude": 0.88,
       "min_magnitude": 0.8,
-      "max_magnitude": 0.8
+      "max_magnitude": 0.96
+    },
+    {
+      "date_utc": "2026-10-16",
+      "source": "AAVSO",
+      "target": "alf Ori",
+      "band": "Vis",
+      "observation_count": 2,
+      "median_magnitude": 1.0,
+      "mean_magnitude": 1.0,
+      "min_magnitude": 1.0,
+      "max_magnitude": 1.0
     }
   ]
 }

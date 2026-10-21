@@ -4,9 +4,9 @@
     "source": "AAVSO",
     "band": "Vis",
     "calculation": "Daily median Vis-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
-    "generated_at_utc": "2026-10-20T08:35:08Z",
-    "day_count": 2819,
-    "observation_count": 16195
+    "generated_at_utc": "2026-10-21T08:36:42Z",
+    "day_count": 2820,
+    "observation_count": 16201
   },
   "days": [
     {
@@ -30638,9 +30638,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 2,
-      "median_magnitude": 0.65,
-      "mean_magnitude": 0.65,
+      "observation_count": 3,
+      "median_magnitude": 0.6,
+      "mean_magnitude": 0.6333,
       "min_magnitude": 0.6,
       "max_magnitude": 0.7
     },
@@ -30726,7 +30726,7 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 1,
+      "observation_count": 2,
       "median_magnitude": 0.6,
       "mean_magnitude": 0.6,
       "min_magnitude": 0.6,
@@ -30803,9 +30803,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 3,
-      "median_magnitude": 0.5,
-      "mean_magnitude": 0.6,
+      "observation_count": 4,
+      "median_magnitude": 0.65,
+      "mean_magnitude": 0.65,
       "min_magnitude": 0.5,
       "max_magnitude": 0.8
     },
@@ -31001,9 +31001,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 3,
-      "median_magnitude": 0.85,
-      "mean_magnitude": 0.7667,
+      "observation_count": 4,
+      "median_magnitude": 0.825,
+      "mean_magnitude": 0.775,
       "min_magnitude": 0.6,
       "max_magnitude": 0.85
     },
@@ -31017,6 +31017,17 @@
       "mean_magnitude": 0.925,
       "min_magnitude": 0.8,
       "max_magnitude": 1.05
+    },
+    {
+      "date_utc": "2026-10-21",
+      "source": "AAVSO",
+      "target": "alf Ori",
+      "band": "Vis",
+      "observation_count": 2,
+      "median_magnitude": 0.905,
+      "mean_magnitude": 0.905,
+      "min_magnitude": 0.7,
+      "max_magnitude": 1.11
     }
   ]
 }

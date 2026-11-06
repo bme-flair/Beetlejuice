@@ -4,9 +4,9 @@
     "source": "AAVSO",
     "band": "Vis",
     "calculation": "Daily median Vis-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
-    "generated_at_utc": "2026-11-05T10:58:35Z",
+    "generated_at_utc": "2026-11-06T10:55:35Z",
     "day_count": 2835,
-    "observation_count": 16279
+    "observation_count": 16284
   },
   "days": [
     {
@@ -30869,9 +30869,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 4,
-      "median_magnitude": 0.85,
-      "mean_magnitude": 0.85,
+      "observation_count": 5,
+      "median_magnitude": 0.8,
+      "mean_magnitude": 0.84,
       "min_magnitude": 0.7,
       "max_magnitude": 1.0
     },
@@ -30891,9 +30891,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 2,
-      "median_magnitude": 0.975,
-      "mean_magnitude": 0.975,
+      "observation_count": 3,
+      "median_magnitude": 1.0,
+      "mean_magnitude": 0.9833,
       "min_magnitude": 0.95,
       "max_magnitude": 1.0
     },
@@ -30913,9 +30913,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 4,
-      "median_magnitude": 0.75,
-      "mean_magnitude": 0.775,
+      "observation_count": 5,
+      "median_magnitude": 0.8,
+      "mean_magnitude": 0.82,
       "min_magnitude": 0.5,
       "max_magnitude": 1.1
     },
@@ -31034,9 +31034,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 4,
+      "observation_count": 5,
       "median_magnitude": 1.0,
-      "mean_magnitude": 0.9525,
+      "mean_magnitude": 0.962,
       "min_magnitude": 0.7,
       "max_magnitude": 1.11
     },
@@ -31166,11 +31166,11 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 2,
-      "median_magnitude": 0.865,
-      "mean_magnitude": 0.865,
+      "observation_count": 3,
+      "median_magnitude": 0.9,
+      "mean_magnitude": 0.8933,
       "min_magnitude": 0.83,
-      "max_magnitude": 0.9
+      "max_magnitude": 0.95
     },
     {
       "date_utc": "2026-11-04",

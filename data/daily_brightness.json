@@ -4,9 +4,9 @@
     "source": "AAVSO",
     "band": "Vis",
     "calculation": "Daily median Vis-band magnitude from parsed AAVSO observations. Lower magnitude means brighter.",
-    "generated_at_utc": "2026-11-22T11:29:06Z",
-    "day_count": 2851,
-    "observation_count": 16353
+    "generated_at_utc": "2026-11-23T12:47:14Z",
+    "day_count": 2852,
+    "observation_count": 16363
   },
   "days": [
     {
@@ -29043,10 +29043,10 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 10,
-      "median_magnitude": 0.45,
-      "mean_magnitude": 0.47,
-      "min_magnitude": 0.3,
+      "observation_count": 11,
+      "median_magnitude": 0.4,
+      "mean_magnitude": 0.4364,
+      "min_magnitude": 0.1,
       "max_magnitude": 0.6
     },
     {
@@ -29098,10 +29098,10 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 8,
-      "median_magnitude": 0.525,
-      "mean_magnitude": 0.5025,
-      "min_magnitude": 0.3,
+      "observation_count": 9,
+      "median_magnitude": 0.5,
+      "mean_magnitude": 0.4689,
+      "min_magnitude": 0.2,
       "max_magnitude": 0.7
     },
     {
@@ -29175,10 +29175,10 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 10,
+      "observation_count": 11,
       "median_magnitude": 0.5,
-      "mean_magnitude": 0.518,
-      "min_magnitude": 0.4,
+      "mean_magnitude": 0.4891,
+      "min_magnitude": 0.2,
       "max_magnitude": 0.7
     },
     {
@@ -29252,9 +29252,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 6,
-      "median_magnitude": 0.41,
-      "mean_magnitude": 0.39,
+      "observation_count": 7,
+      "median_magnitude": 0.4,
+      "mean_magnitude": 0.3629,
       "min_magnitude": 0.18,
       "max_magnitude": 0.49
     },
@@ -29406,9 +29406,9 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 9,
+      "observation_count": 10,
       "median_magnitude": 0.4,
-      "mean_magnitude": 0.4556,
+      "mean_magnitude": 0.44,
       "min_magnitude": 0.1,
       "max_magnitude": 0.7
     },
@@ -29637,10 +29637,10 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 7,
-      "median_magnitude": 0.52,
-      "mean_magnitude": 0.5457,
-      "min_magnitude": 0.5,
+      "observation_count": 8,
+      "median_magnitude": 0.51,
+      "mean_magnitude": 0.5275,
+      "min_magnitude": 0.4,
       "max_magnitude": 0.6
     },
     {
@@ -29681,10 +29681,10 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 6,
+      "observation_count": 7,
       "median_magnitude": 0.5,
-      "mean_magnitude": 0.545,
-      "min_magnitude": 0.47,
+      "mean_magnitude": 0.5171,
+      "min_magnitude": 0.35,
       "max_magnitude": 0.7
     },
     {
@@ -31364,11 +31364,22 @@
       "source": "AAVSO",
       "target": "alf Ori",
       "band": "Vis",
-      "observation_count": 2,
+      "observation_count": 3,
       "median_magnitude": 0.7,
       "mean_magnitude": 0.7,
       "min_magnitude": 0.6,
       "max_magnitude": 0.8
+    },
+    {
+      "date_utc": "2026-11-22",
+      "source": "AAVSO",
+      "target": "alf Ori",
+      "band": "Vis",
+      "observation_count": 2,
+      "median_magnitude": 0.75,
+      "mean_magnitude": 0.75,
+      "min_magnitude": 0.6,
+      "max_magnitude": 0.9
     }
   ]
 }

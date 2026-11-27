@@ -44,7 +44,7 @@
 <polyline points='473.18,355.75 473.18,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='619.81,355.75 619.81,48.50 ' style='stroke-width: 1.36; stroke: #EBEBEB; stroke-linecap: butt;' />
 <polyline points='75.19,67.43 96.13,62.47 117.08,67.43 138.03,74.04 158.97,67.43 179.92,67.43 200.87,67.43 221.82,67.43 242.76,74.04 263.71,80.65 284.66,74.04 305.60,82.30 326.55,83.96 347.50,83.96 368.45,83.96 389.39,97.18 410.34,102.14 431.29,117.01 452.23,103.79 473.18,117.01 494.13,117.01 515.08,117.01 536.02,117.01 556.97,117.01 577.92,117.01 598.86,117.01 619.81,117.01 640.76,117.01 661.71,117.01 682.65,117.01 ' style='stroke-width: 1.49; stroke: #000000; stroke-opacity: 0.75; stroke-dasharray: 7.97,7.97; stroke-linecap: butt;' />
-<polyline points='75.19,249.23 96.13,302.11 117.08,315.34 138.03,335.17 158.97,341.78 200.87,315.34 221.82,282.28 242.76,315.34 263.71,249.23 284.66,216.17 305.60,259.14 326.55,282.28 347.50,249.23 368.45,315.34 389.39,249.23 410.34,232.70 431.29,216.17 452.23,183.12 473.18,239.31 494.13,282.28 515.08,97.18 536.02,183.12 556.97,249.23 577.92,183.12 598.86,216.17 619.81,315.34 682.65,183.12 ' style='stroke-width: 1.71; stroke-linecap: butt;' />
+<polyline points='75.19,249.23 96.13,302.11 117.08,315.34 138.03,335.17 158.97,341.78 200.87,315.34 221.82,282.28 242.76,315.34 263.71,249.23 284.66,216.17 305.60,259.14 326.55,282.28 347.50,249.23 368.45,315.34 389.39,249.23 410.34,232.70 431.29,216.17 452.23,183.12 473.18,239.31 494.13,282.28 515.08,97.18 536.02,183.12 556.97,249.23 577.92,183.12 598.86,216.17 619.81,315.34 661.71,117.01 682.65,183.12 ' style='stroke-width: 1.71; stroke-linecap: butt;' />
 <circle cx='75.19' cy='249.23' r='3.24' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
 <circle cx='96.13' cy='302.11' r='4.06' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
 <circle cx='117.08' cy='315.34' r='3.24' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
@@ -71,6 +71,7 @@
 <circle cx='577.92' cy='183.12' r='3.24' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
 <circle cx='598.86' cy='216.17' r='2.73' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
 <circle cx='619.81' cy='315.34' r='2.06' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
+<circle cx='661.71' cy='117.01' r='2.06' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
 <circle cx='682.65' cy='183.12' r='2.06' style='stroke-width: 0.90; stroke: #000000; stroke-opacity: 0.80; fill: #000000; fill-opacity: 0.80;' />
 </g>
 <g clip-path='url(#cpMC4wMHw3MjAuMDB8MC4wMHwzOTYuMDA=)'>
